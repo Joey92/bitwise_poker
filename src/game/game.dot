@@ -1,0 +1,67 @@
+digraph poker_game {
+	
+	// Define nodes
+	dealer_counter [shape=box, label="Dealer Counter"];
+	start [shape=ellipse, label="Start"];
+	deal [shape=box, label="Deal Cards"];
+	end [shape=ellipse, label="End"];
+	
+	// Define edges
+	dealer_counter -> start;
+	start -> deal;
+	deal -> reset_round_counter;
+	reset_round_counter -> assign_dealer;
+	assign_dealer -> blinds;
+
+	blinds -> pay_half_blinds [label="Blinds"];
+	blinds -> pay_antes [label="Antes"];
+
+	pay_antes [shape=ellipse, label="Pay Antes"];
+	pay_antes -> betting;
+
+	blinds [shape=ellipse, label="Blinds or ante?"];
+	pay_full_blinds [shape=ellipse, label="Pay Blinds"];
+	pay_half_blinds [shape=ellipse, label="Pay half Blinds"];
+
+	pay_half_blinds -> pay_full_blinds;
+	pay_full_blinds -> betting;
+
+	// betting rounds
+	betting [shape=ellipse, label="Betting"];
+	is_folded [shape=diamond, label="Is folded?"];
+	
+	match_highest_bet [shape=ellipse, label="Match Highest Bet"];
+	increase_highest_bet [shape=ellipse, label="Increase Highest Bet"];
+	update_player_bet [shape=ellipse, label="Update Player's Bet"];
+	all_active_players_bet_match [shape=diamond, label="All active players bet match?"];
+	actions [shape=diamond, label="Actions"];
+
+	betting -> all_active_players_bet_match;
+	all_active_players_bet_match -> end [label="Yes"];
+	all_active_players_bet_match -> is_folded [label="No"];
+
+	raise [shape=ellipse, label="Raise"];
+	call [shape=ellipse, label="Call / Check"];
+	fold [shape=ellipse, label="Fold"];
+
+	fold -> betting;
+
+
+	is_folded -> betting [label="Yes"];
+
+	
+	is_folded -> actions [label="No"];
+
+	actions -> call;
+	actions -> raise;
+	actions -> fold;
+
+	call -> match_highest_bet;
+	raise -> increase_highest_bet;
+
+	increase_highest_bet -> update_player_bet;
+	match_highest_bet -> update_player_bet;
+	pay_half_blinds -> update_player_bet;
+
+	update_player_bet -> betting;
+}
